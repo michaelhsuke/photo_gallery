@@ -28,4 +28,8 @@ public class GalleryItem {
     public void setPicUrl(String mPicUrl) {
         this.mPicUrl = mPicUrl;
     }
+
+    public String toString() {
+        return mTitle;
+    }
 }

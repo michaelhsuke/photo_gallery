@@ -28,7 +28,7 @@ public class FlickrFetchr {
     private static final String APPID = "6423";
     private static final String SECRET = "85a76ead7c40415b9f6401e9046a6413";
     private static final String PAGE = "1";
-    private static final String NUM = "10";
+    private static final String NUM = "100";
 
     // 创建时间戳
     private String createTimestamp() {
