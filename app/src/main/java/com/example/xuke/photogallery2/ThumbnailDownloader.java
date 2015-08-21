@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.support.v4.util.LruCache;
 import android.util.Log;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class ThumbnailDownloader<Token> extends HandlerThread {
     Map<Token, String> requestMap = Collections.synchronizedMap(new HashMap<Token, String>());
     Handler mResponseHandler;
     Listener<Token> mListener;
+    LruCache<Token, Bitmap> bitmapLruCache;
 
     public interface Listener<Token> {
         void onThumbnailDownloaded(Token token, Bitmap thumbnail);
@@ -69,6 +71,19 @@ public class ThumbnailDownloader<Token> extends HandlerThread {
                 return;
             }
 
+            // 如果存在缓存则使用缓存
+//            if (bitmapLruCache.get(token) != null) {
+//
+//                if (requestMap.get(token) != url) {
+//                    return;
+//                }
+//
+//                requestMap.remove(token);
+//                mListener.onThumbnailDownloaded(token, bitmapLruCache.get(token));
+//
+//                return;
+//            }
+
             byte[] bitmapBytes = new FlickrFetchr().getUrlBytes(url);
             final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
             Log.i(TAG, "Bitmap created");
@@ -82,6 +97,7 @@ public class ThumbnailDownloader<Token> extends HandlerThread {
                     }
 
                     requestMap.remove(token);
+//                    bitmapLruCache.put(token, bitmap);  // 存入缓存
                     mListener.onThumbnailDownloaded(token, bitmap);
                 }
             });

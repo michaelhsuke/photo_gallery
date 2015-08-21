@@ -2,6 +2,7 @@ package com.example.xuke.photogallery2;
 
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Gallery;
 
 import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
@@ -24,11 +25,18 @@ public class FlickrFetchr {
 
     public static final String TAG = "FlickrFetchr";
 
+    public static final String PREF_SEARCH_QUERY = "searchQuery";
+    public static final String PREF_LAST_RESULT_ID = "lastResultId";
+
     private static final String ENDPOINT = "http://route.showapi.com/197-1";
     private static final String APPID = "6423";
     private static final String SECRET = "85a76ead7c40415b9f6401e9046a6413";
     private static final String PAGE = "1";
     private static final String NUM = "100";
+
+    private static final String SEARCH_URL = "http://route.showapi.com/477-1";
+    private static final String STAR = "4";
+    private static final String PROVINCE = "安徽";
 
     // 创建时间戳
     private String createTimestamp() {
@@ -122,19 +130,10 @@ public class FlickrFetchr {
         return new String(getUrlBytes(urlSpec));
     }
 
-    public ArrayList<GalleryItem> fetchItems() {
+    public ArrayList<GalleryItem> downloadGalleryItems(String url) {
 
         ArrayList<GalleryItem> items = new ArrayList<>();
         try {
-            String timestamp = createTimestamp();
-            String url = Uri.parse(ENDPOINT).buildUpon()
-                    .appendQueryParameter("showapi_appid", APPID)
-                    .appendQueryParameter("showapi_timestamp", timestamp)
-                    .appendQueryParameter("num", NUM)
-                    .appendQueryParameter("page", PAGE)
-                    .appendQueryParameter("showapi_sign", SECRET)
-                    .build().toString();
-
             String JSONString = getUrl(url);
             parseItems(items, JSONString);
         } catch (IOException ioe) {
@@ -144,6 +143,34 @@ public class FlickrFetchr {
         }
 
         return items;
+    }
+
+    public ArrayList<GalleryItem> fetchItems() {
+
+        String timestamp = createTimestamp();
+        String url = Uri.parse(ENDPOINT).buildUpon()
+                .appendQueryParameter("showapi_appid", APPID)
+                .appendQueryParameter("showapi_timestamp", timestamp)
+                .appendQueryParameter("num", NUM)
+                .appendQueryParameter("page", PAGE)
+                .appendQueryParameter("showapi_sign", SECRET)
+                .build().toString();
+
+        return downloadGalleryItems(url);
+    }
+
+    public ArrayList<GalleryItem> search(String query) {
+
+        String timestamp = createTimestamp();
+        String url = Uri.parse(ENDPOINT).buildUpon()
+                .appendQueryParameter("showapi_appid", APPID)
+                .appendQueryParameter("showapi_timestamp", timestamp)
+                .appendQueryParameter("num", NUM)
+                .appendQueryParameter("page", PAGE)
+                .appendQueryParameter("showapi_sign", SECRET)
+                .build().toString();
+
+        return downloadGalleryItems(url);
     }
 
     private void parseItems(ArrayList<GalleryItem> items, String json) throws JSONException {
